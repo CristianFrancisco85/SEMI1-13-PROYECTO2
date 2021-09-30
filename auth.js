@@ -1,8 +1,16 @@
 const dotenv = require('dotenv').config()
 const router = require("express").Router()
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
-const CognitoAWS = new AmazonCognitoIdentity.CognitoUserPool(JSON.parse(process.env.COGNITO_CRED))
 const crypto = require('crypto')
+const mysql = require('mysql')
+const AWS = require('aws-sdk')
+const uuid = require('uuid');
+
+
+const CognitoAWS = new AmazonCognitoIdentity.CognitoUserPool(JSON.parse(process.env.COGNITO_CRED))
+const S3 = new AWS.S3(JSON.parse(process.env.S3_CRED));
+const mydb = mysql.createPool(JSON.parse(process.env.MYSQL_CRED))
+
 
 router.get("/",(req, res) => {
   res.sendStatus(200)
@@ -16,6 +24,7 @@ router.get("/",(req, res) => {
     "email":"haxocas749@ergowiki.com",
     "password":"12345678",
     "botmode":"0|1"
+    "image64":"base64code"
   }
 
   Retorna:
@@ -26,7 +35,7 @@ router.get("/",(req, res) => {
     "hash": "7371bfb4d38d7e58d1584569a1eccb9c96298ec585520a96663527cf797700e4"}
   }
 */
-router.post('/signUp',handleLogin = (req,res) => {
+router.post('/signUp',handleLogin = async (req,res) => {
 
   let attributelist = []
 
@@ -47,14 +56,35 @@ router.post('/signUp',handleLogin = (req,res) => {
 
   let hash = crypto.createHash('sha256').update(req.body.password+process.env.SALT).digest('hex')
 
-  CognitoAWS.signUp(req.body.username,hash,attributelist,null, async (err, data) => {
-      if (err) {
-        res.json({"ERROR":err.name})
+  let fileName = "profileImages/"+req.body.username+uuid.v4()+".png"
+  let buffer = new Buffer.from(req.body.image64, 'base64')
+  const params = {
+    Bucket: "semi1p2-13",
+    Key: fileName,
+    Body: buffer,
+    ContentType: "image",
+    ACL: 'public-read'
+  }
+
+  S3.upload(params,(errS3,resS3)=>{
+    if(errS3){
+      res.json({"ERROR":"S3:"+errS3})
+      return
+    }
+    mydb.query('INSERT INTO user(username,image,hash) VALUES(?,?,?);',[req.body.username,fileName,hash],(errSQL,resSQL)=>{
+      if(errSQL){
+        res.json({"ERROR":"SQL:"+errSQL})
         return
       }
-      res.json({"OK":{"username":data.user.username,hash}})
+      CognitoAWS.signUp(req.body.username,hash,attributelist,null, async (errCog, resCog) => {
+        if (errCog) {
+          res.json({"ERROR":"Cognito:"+errCog.name})
+          return
+        }
+        res.json({"OK":{"username":resCog.user.username,hash}})
+      })
+    })
   })
-
 })
 
 /**
