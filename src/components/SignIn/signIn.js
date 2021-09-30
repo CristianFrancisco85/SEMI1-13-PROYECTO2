@@ -1,5 +1,7 @@
+import { useEffect } from "react"
 import { useHistory } from "react-router"
 import { useLoggedUser } from "../../contexts/globalContext"
+import { fetchSignIn } from "../../services/auth"
 import SignInView from "./signInView"
 
 const SignIn = () => {
@@ -7,19 +9,25 @@ const SignIn = () => {
     let history =  useHistory()
     const [user,setUser] = useLoggedUser()
 
+    useEffect(() => {
+        window.sessionStorage.removeItem('user')
+        setUser(undefined)
+    },[])
+
     const handleLogIn = async (event) => {
-        event.preventDefault();
+        event.preventDefault()
         let formData = new FormData(event.target);
-        /*await loginUser(formData.get('username'),formData.get('password')).then((res)=>{
-        if(res.length==0){
-            alert('Credenciales Invalidos')
-        }
-        else{
-            console.log(res[0]);
-            setUser(res[0])
-            window.sessionStorage.setItem('user',JSON.stringify(res[0]))
-            history.push('/dashboard')
-        }})*/
+
+        await fetchSignIn(formData.get('username'),formData.get('password')).then( res =>{
+            if(res.OK){
+                setUser(res.OK)
+                window.sessionStorage.setItem('user',JSON.stringify(res.OK))
+                history.push('/dashboard')
+            }
+            else if(res.ERROR){
+                alert(`Error : ${res.ERROR}`)
+            }
+        })
     }
 
     return(

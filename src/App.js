@@ -5,6 +5,7 @@ import SignIn from './components/SignIn/signIn'
 import SignUp from './components/SignUp/signUp'
 import Dashboard from './components/Dashboard/dashboard'
 import AddFriend from './components/AddFriend/addFriend'
+import { BadAuthError } from './pages/badAuth'
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
           <Route  exact path="/signup" component={SignUp}/>
           <Route  exact path="/dashboard" component={Dashboard}/>
           <Route  exact path="/addFriend" component={AddFriend}/>
+          <Route  exact path="/badAuth" component={BadAuthError}/>
           <Redirect from="/" to="/login" />
       </Switch>
       

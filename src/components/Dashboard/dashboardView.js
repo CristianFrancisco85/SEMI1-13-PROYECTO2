@@ -38,6 +38,9 @@ const DashboardView = () =>{
                 <Row className='mt-2 ps-5 pe-5'>
                     <Button variant='success' as={Link} to='/addfriend'>Agregar Amigo</Button>
                 </Row>
+                <Row className='mt-2 ps-5 pe-5'>
+                    <Button variant='danger' as={Link} to='/'>Cerrar Sesion</Button>
+                </Row>
             </Col>
             <Col className='mt-5'>
                 <Row className='justify-content-center'>

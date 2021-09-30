@@ -1,3 +1,5 @@
+export const URL_SERVER = 'http://localhost:4000'
+
 export const encodeBase64 = async (myblob) =>{
 
     let base64 = await new Promise((resolve, _) => {

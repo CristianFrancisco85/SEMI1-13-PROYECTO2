@@ -20,7 +20,7 @@ const UserView = (props) =>{
                 </Row>
                 <br></br>
                 <Row className='justify-content-center ps-4 pe-4'>
-                    <Button variant='success' block onClick={handleAddFriend}>Agregar Amigo</Button>
+                    <Button variant='success' onClick={handleAddFriend}>Agregar Amigo</Button>
                 </Row>
             </Card.Body>
         </Card>
