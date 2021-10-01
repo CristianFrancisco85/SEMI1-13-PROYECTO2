@@ -8,7 +8,8 @@ const uuid = require('uuid');
 
 
 const CognitoAWS = new AmazonCognitoIdentity.CognitoUserPool(JSON.parse(process.env.COGNITO_CRED))
-const S3 = new AWS.S3(JSON.parse(process.env.S3_CRED));
+const S3 = new AWS.S3(JSON.parse(process.env.S3_CRED))
+const Rekognition = new AWS.Rekognition(JSON.parse(process.env.REK_CRED))
 const mydb = mysql.createPool(JSON.parse(process.env.MYSQL_CRED))
 
 
@@ -148,6 +149,7 @@ router.post('/signIn',handleLogin = (req,res) => {
     "password":"12345678" | "hash":"sha256"
   * "newPassword":"12345678",
   * "botmode":"0|1"
+  * "image64":"base64code"
   }
 
   Retorna:
@@ -158,6 +160,10 @@ router.post('/signIn',handleLogin = (req,res) => {
     "resPassword": {
       "OK": "SUCCESS" | "ERROR":err.name
     }
+    "resProfileImage": {
+      "OK": "SUCCESS" | "ERROR":err.name
+    }
+    
   }
 */
 router.post('/update',handleLogin = async (req,res) => {
@@ -192,24 +198,32 @@ router.post('/update',handleLogin = async (req,res) => {
   let cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData)
   cognitoUser.setAuthenticationFlowType('USER_PASSWORD_AUTH')
 
+  let verify = await new Promise ((resolve, _) => {
+    cognitoUser.authenticateUser(authenticationDetails,{
+      onSuccess: (result) => {
+        resolve(true)    
+      },
+      onFailure: (err) => {
+        resolve(false)
+      }
+    })
+  })
+  if(!verify){
+    res.send({"ERROR":'Bad Password'})
+    return
+  }
+
   let resAttributes
   if(attributelist.length>0){
     resAttributes = await new Promise ((resolve, _) => {
-      cognitoUser.authenticateUser(authenticationDetails,{
-          onSuccess: (result) => {
-              cognitoUser.updateAttributes(attributelist, (err, result) => {
-                if (err) {
-                  resolve({"ERROR":err.name})
-                } 
-                else {
-                  resolve({"OK":result})
-                }
-              })     
-          },
-          onFailure: (err) => {
-            resolve({"ERROR":err.name})
-          }
-      })
+      cognitoUser.updateAttributes(attributelist, (err, result) => {
+        if (err) {
+          resolve({"ERROR":err.name})
+        } 
+        else {
+          resolve({"OK":result})
+        }
+      }) 
     })
   }
 
@@ -227,7 +241,109 @@ router.post('/update',handleLogin = async (req,res) => {
       })
     })
   }
-  res.json({resAttributes,resPassword})
+
+  let resProfileImage
+  if(req.body.image64){
+    resProfileImage = await new Promise((resolve,_)=>{
+      
+      let fileName = "profileImages/"+req.body.username+uuid.v4()+".png"
+      let buffer = new Buffer.from(req.body.image64, 'base64')
+      const params = {
+        Bucket: "semi1p2-13",
+        Key: fileName,
+        Body: buffer,
+        ContentType: "image",
+        ACL: 'public-read'
+      }
+
+      S3.upload(params,(errS3,resS3)=>{
+        if(errS3){
+          resolve({"ERROR":"S3:"+errS3})
+          return
+        }
+        mydb.query('SELECT image FROM user WHERE username=?',[req.body.username],(errSQL,result)=>{
+          if(errSQL){
+            resolve({"ERROR":"SQL:"+errSQL})
+            return
+          }
+          S3.deleteObject({Bucket: "semi1p2-13",Key: result[0].image },(errS3,resS3) =>{
+            if(errS3){
+              resolve({"ERROR":"S3:"+errS3})
+              return
+            }
+            mydb.query('UPDATE user SET image=? WHERE username = ?;',[fileName,req.body.username,],(errSQL,resSQL)=>{
+              if(errSQL){
+                resolve({"ERROR":"SQL:"+errSQL})
+                return
+              }
+              resolve({"OK":resSQL})
+            })
+          })
+        })
+      })
+
+    })
+  }
+
+  res.json({resAttributes,resPassword,resProfileImage})
+
+
+
+})
+
+/**
+  Recibe:
+  {
+    "username":"cristianfrancisco85",
+    "image64":"base64code"
+  }
+
+  Retorna:
+  {
+    "resAttributes": {
+      "OK": "SUCCESS" | "ERROR":err.name
+    },    
+  }
+*/
+
+router.post('/faceid',handleLogin = async (req,res) => {
+
+  let userData =  await new Promise((resolve,_)=>{
+    mydb.query('SELECT * FROM user WHERE username =?',[req.body.username],(err,result)=>{
+      if(err||result.length==0){
+        resolve(false)
+        return
+      }
+      resolve(result[0])   
+    })
+  })
+  if(userData==false){
+    res.json({"ERROR":'Usuario no existe'})
+    return
+  }
+  let params = { 
+    SourceImage: {
+      S3Object: {
+        Bucket: "semi1p2-13", 
+        Name: userData.image
+      }    
+    }, 
+    TargetImage: {
+      Bytes: Buffer.from(req.body.image64,'base64')    
+    },
+    SimilarityThreshold: '80'
+  }
+
+  Rekognition.compareFaces(params, function(err, data) {
+    if (err) {
+      res.json({"ERROR": err})
+    } 
+    else {
+      console.log(data)   
+      res.json({Comparacion: data.FaceMatches})     
+    }
+  });
+  
 
 })
 

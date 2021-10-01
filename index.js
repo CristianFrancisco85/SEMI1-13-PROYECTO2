@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const cognitoEndPoints = require("./auth")
+const dataEndPoints = require("./data")
 const uuid = require('uuid')
 const dotenv = require('dotenv').config()
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
@@ -14,6 +15,7 @@ app.use(cors({
 }))
 app.use(express.json({limit:'10mb'}))
 app.use('/auth',cognitoEndPoints)
+app.use('/data',dataEndPoints)
 
 app.listen(port, () => {
     console.log(`Listen on port ${port}`)
