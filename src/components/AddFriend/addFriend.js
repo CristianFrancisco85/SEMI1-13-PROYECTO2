@@ -5,12 +5,15 @@ import AddFriendView from "./addFriendView"
 
 const AddFriend = () => {
 
-    const [user,setuser]= useLoggedUser()
+    const [user,setUser]= useLoggedUser()
     const history = useHistory()
 
-    useEffect(() => {
-        if(!user){
-            history.push('/badAuth')
+    useEffect( async () => {
+        if(!user?.username){
+            if(!localStorage.getItem('user')){
+                history.push('/badAuth')
+            }
+            setUser(localStorage.getItem('user'))
         }
     },[])
 

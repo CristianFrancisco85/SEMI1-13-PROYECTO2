@@ -1,4 +1,5 @@
 export const URL_SERVER = 'http://localhost:4000'
+export const URL_S3 = 'https://semi1p2-13.s3.us-east-2.amazonaws.com/'
 
 export const encodeBase64 = async (myblob) =>{
 

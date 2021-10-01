@@ -7,19 +7,22 @@ import Image from 'react-bootstrap/Image'
 import { Link } from "react-router-dom"
 import userIcon from '../../images/userIcon.png'
 import User from '../User/user'
+import { useLoggedUser } from '../../contexts/globalContext'
 
 
 const AddFriendView = () =>{
+
+    const [user,setUser]=useLoggedUser()
 
     return (
         <Container fluid>
         <Row>
             <Col md={3} className='mt-4'>
                 <Row className='mt-3 justify-content-center'>
-                    <Image src={userIcon} style={{width:'12em'}} roundedCircle></Image>
+                    <Image src={user.image||userIcon} style={{width:'12em',height:'12em'}} roundedCircle></Image>
                 </Row>
                 <Container className='mt-3 d-flex justify-content-center'>
-                    <h3>Nombre</h3>
+                    <h3>{user.username}</h3>
                 </Container>
                 <Row className='mt-2 ps-5 pe-5'>
                     <Button variant='outline-primary' as={Link} to='/dashboard'>Regresar</Button>

@@ -26,7 +26,7 @@ function App() {
           <Route  exact path="/login" component={SignIn}/>
           <Route  exact path="/signup" component={SignUp}/>
           <Route  exact path="/dashboard" component={Dashboard}/>
-          <Route  exact path="/addFriend" component={AddFriend}/>
+          <Route  exact path="/dashboard/addFriend" component={AddFriend}/>
           <Route  exact path="/badAuth" component={BadAuthError}/>
           <Redirect from="/" to="/login" />
       </Switch>

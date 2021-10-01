@@ -11,9 +11,10 @@ import { useState } from 'react'
 import EditProfileModal from '../EditProfile/editprofile'
 import NewPub from '../NewPub/newPub'
 
-const DashboardView = () =>{
+
+const DashboardView = (props) =>{
     
-    const [user,setUser] = useLoggedUser()
+    const [user,setUser]= useLoggedUser()
     const [editModal,setEditModal] = useState(false)
     const [newPub,setNewPubModal] = useState(false)
 
@@ -22,10 +23,10 @@ const DashboardView = () =>{
             <Row>
             <Col md={3} className='mt-4'>
                 <Row className='mt-3 justify-content-center'>
-                    <Image src={userIcon} style={{width:'12em'}} roundedCircle></Image>
+                    <Image src={user.image||userIcon} style={{width:'12rem',height:'12rem'}} roundedCircle></Image>
                 </Row>
                 <Container className='mt-3 d-flex justify-content-center'>
-                    <h3>Nombre</h3>
+                    <h3>{user.username}</h3>
                 </Container>
                 <Row className='mt-2 ps-5 pe-5'>
                     <Button variant='warning' onClick={()=>setEditModal(true)}>Editar Perfil</Button>
@@ -36,7 +37,7 @@ const DashboardView = () =>{
                     <NewPub visibleProp={newPub} setVisibleHandler={setNewPubModal}></NewPub>
                 </Row>
                 <Row className='mt-2 ps-5 pe-5'>
-                    <Button variant='success' as={Link} to='/addfriend'>Agregar Amigo</Button>
+                    <Button variant='success' as={Link} to='/dashboard/addfriend'>Agregar Amigo</Button>
                 </Row>
                 <Row className='mt-2 ps-5 pe-5'>
                     <Button variant='danger' as={Link} to='/'>Cerrar Sesion</Button>
