@@ -339,8 +339,13 @@ router.post('/faceid',handleLogin = async (req,res) => {
       res.json({"ERROR": err})
     } 
     else {
-      console.log(data)   
-      res.json({Comparacion: data.FaceMatches})     
+      if(data.FaceMatches.length>0 && data.FaceMatches[0].Similarity>90){
+        res.json({"OK": userData.hash})
+      }
+      else{
+        res.json({"ERROR": 'NO MATCH'})
+      }   
+           
     }
   });
   
