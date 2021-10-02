@@ -10,6 +10,7 @@ import Publication from '../Publication/publication'
 import { useState } from 'react'
 import EditProfileModal from '../EditProfile/editprofile'
 import NewPub from '../NewPub/newPub'
+import FriendRequest from '../FriendRequests/friendRequests'
 
 
 const DashboardView = (props) =>{
@@ -17,6 +18,7 @@ const DashboardView = (props) =>{
     const [user,setUser]= useLoggedUser()
     const [editModal,setEditModal] = useState(false)
     const [newPub,setNewPubModal] = useState(false)
+    const [requestModal,setRequestModal] = useState(false)
 
     return(
         <Container fluid>
@@ -38,6 +40,10 @@ const DashboardView = (props) =>{
                 </Row>
                 <Row className='mt-2 ps-5 pe-5'>
                     <Button variant='success' as={Link} to='/dashboard/addfriend'>Agregar Amigo</Button>
+                </Row>
+                <Row className='mt-2 ps-5 pe-5'>
+                    <Button variant='secondary' onClick={()=>setRequestModal(true)}>Solicitudes</Button>
+                    <FriendRequest visibleProp={requestModal} setVisibleHandler={setRequestModal}></FriendRequest>
                 </Row>
                 <Row className='mt-2 ps-5 pe-5'>
                     <Button variant='danger' as={Link} to='/'>Cerrar Sesion</Button>

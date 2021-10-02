@@ -22,14 +22,15 @@ const SignIn = () => {
         event.preventDefault()
         let formData = new FormData(event.target)
         let userData
-
+        let tempRes
         if(userImage64){
-            let tempres = await fetchFaceId(formData.get('username'),userImage64)
-            console.log(tempres);
+            tempRes = await fetchFaceId(formData.get('username'),userImage64)
+            if(tempRes.ERROR){
+                alert("Error:"+tempRes.ERROR)
+                return
+            }
         }
-        alert('xD')
-        return
-        await fetchSignIn(formData.get('username'),formData.get('password')).then( async (res) =>{
+        await fetchSignIn(formData.get('username'),formData.get('password'),tempRes?.OK).then( async (res) =>{
             if(res.OK){
                 userData=res.OK
                 userData.username=formData.get('username')             

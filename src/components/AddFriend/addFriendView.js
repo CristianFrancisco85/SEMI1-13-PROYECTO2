@@ -10,9 +10,10 @@ import User from '../User/user'
 import { useLoggedUser } from '../../contexts/globalContext'
 
 
-const AddFriendView = () =>{
+const AddFriendView = (props) =>{
 
     const [user,setUser]=useLoggedUser()
+    const {persons}= props
 
     return (
         <Container fluid>
@@ -31,13 +32,13 @@ const AddFriendView = () =>{
 
             <Col  className='mt-4'>
                 <Row className='justify-content-center'>
-                    <User></User>
-                    <User></User>
-                    <User></User>
-                    <User></User>       
+                    {persons.map(person=>{
+                        return <User key={person.username} data={person}></User>
+                    })}   
                 </Row>
             </Col>
         </Row>
+        
         </Container>
     )
 }

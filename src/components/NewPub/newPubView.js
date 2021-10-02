@@ -19,7 +19,7 @@ const NewPubView = (props) =>{
 
                     <FormGroup>
                         <Form.Label>Comentario</Form.Label>
-                        <FormControl required name="name" as="textarea" rows={3}/>
+                        <FormControl required name="comment" as="textarea" rows={3}/>
                     </FormGroup> 
                     <br></br>
                     <Button variant="primary" type="submit">

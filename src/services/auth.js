@@ -13,14 +13,14 @@ export const fetchSignUp = async (username,name,email,password,botmode,image64) 
     .then(data => data)
 }
 
-export const fetchSignIn = async (username,password) =>{
+export const fetchSignIn = async (username,password,hash) =>{
     return await fetch(`${URL_SERVER}/auth/signIn`,{
         method:'POST',
         headers:{
             'Content-Type': 'application/json'
         },
         mode:'cors',
-        body:JSON.stringify({username,password})
+        body:JSON.stringify({username,password,hash})
     })
     .then(res => res.json())
     .then(data => data)
