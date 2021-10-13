@@ -92,6 +92,45 @@ export const rejectFriendRequest = async (username,friend) =>{
     .then(data => data)
 }
 
+export const getPublications = async (username) =>{
+    return await fetch(`${URL_SERVER}/data/getPublications`,{
+        method:'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        mode:'cors',
+        body:JSON.stringify({username})
+    })
+    .then(res => res.json())
+    .then(data => data)
+}
+
+export const translatePublication = async (text) =>{
+    return await fetch(`${URL_SERVER}/data/translatePublication`,{
+        method:'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        mode:'cors',
+        body:JSON.stringify({text})
+    })
+    .then(res => res.json())
+    .then(data => data)
+}
+
+export const areFriends = async (username1,username2) =>{
+    return await fetch(`${URL_SERVER}/data/areFriends`,{
+        method:'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        mode:'cors',
+        body:JSON.stringify({username1,username2})
+    })
+    .then(res => res.json())
+    .then(data => data)
+}
+
 
 
 

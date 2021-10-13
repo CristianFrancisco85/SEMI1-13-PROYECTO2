@@ -11,7 +11,7 @@ const FriendRequestsView = (props) =>{
                 <Modal.Title>Solicitudes de Amistad</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {requests.map(request=>{
+                {requests?.map(request=>{
                     return <Row>
                         <Card>
                             <Card.Header>

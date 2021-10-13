@@ -10,7 +10,7 @@ const AddFriend = () => {
     const history = useHistory()
     const [persons,setPersons] = useState([])
 
-    useEffect( async () => {
+    useEffect( () => {
         if(!user?.username){
             if(!localStorage.getItem('user')){
                 history.push('/badAuth')
@@ -18,7 +18,10 @@ const AddFriend = () => {
             setUser(localStorage.getItem('user'))
         }
         else{
-            await getPersons(user.username).then(res=>{
+            async function fetchData(){ 
+                return await getPersons(user.username).then(res=>res)
+            }
+            fetchData().then(res=>{
                 if(res.OK){
                     setPersons(res.OK)
                 }

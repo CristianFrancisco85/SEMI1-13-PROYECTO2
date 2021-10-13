@@ -17,7 +17,7 @@ const UserView = (props) =>{
             </Card.Header>
             <Card.Body>
             <Row className='justify-content-center'>
-                    <Image style={{width:'8em'}}  src={`${URL_S3+userData.image}`} roundedCircle ></Image>
+                    <Image style={{width:'8em',height:'8em'}}  src={`${URL_S3+userData.image}`} roundedCircle ></Image>
                 </Row>
                 <br></br>
                 <Row className='justify-content-center ps-4 pe-4'>

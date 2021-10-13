@@ -11,10 +11,13 @@ import { useState } from 'react'
 import EditProfileModal from '../EditProfile/editprofile'
 import NewPub from '../NewPub/newPub'
 import FriendRequest from '../FriendRequests/friendRequests'
+import Chips,{Chip} from 'react-chips'
+import Chat from '../Chat/chat'
 
 
 const DashboardView = (props) =>{
     
+    const {publications,filters,onChangeFilters,allTags}=props
     const [user,setUser]= useLoggedUser()
     const [editModal,setEditModal] = useState(false)
     const [newPub,setNewPubModal] = useState(false)
@@ -46,13 +49,32 @@ const DashboardView = (props) =>{
                     <FriendRequest visibleProp={requestModal} setVisibleHandler={setRequestModal}></FriendRequest>
                 </Row>
                 <Row className='mt-2 ps-5 pe-5'>
+                    <Button variant='info' as={Link} to='/dashboard/chat'>Chat</Button>
+                </Row>
+                <Row className='mt-2 ps-5 pe-5'>
                     <Button variant='danger' as={Link} to='/'>Cerrar Sesion</Button>
                 </Row>
             </Col>
             <Col className='mt-5'>
                 <Row className='justify-content-center'>
-                    <Publication></Publication>
-                    <Publication></Publication>
+                <Chips
+                    value={filters}
+                    onChange={(filters) => onChangeFilters(filters)}
+                    suggestions={allTags}
+                />
+                </Row>
+                <Row className='justify-content-center'>
+                    {publications.map((item,index)=> {
+                        if(filters.length>0){
+                            if(item.etiquetas.split(',').some(r=> filters.includes(r))){
+                                return <Publication key={index} data={item}></Publication>
+                            }
+                        }
+                        else{
+                            return <Publication key={index} data={item}></Publication>
+                        }
+                        
+                    })}
                 </Row>
             </Col>
             </Row>
