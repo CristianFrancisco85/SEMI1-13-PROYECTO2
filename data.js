@@ -6,6 +6,7 @@ const AWS = require('aws-sdk')
 const uuid = require('uuid');
 const S3 = new AWS.S3(JSON.parse(process.env.S3_CRED))
 const Rekognition = new AWS.Rekognition(JSON.parse(process.env.REK_CRED))
+const Translate = new AWS.Translate(JSON.parse(process.env.TRANSLATE_CRED))
 
 router.get("/",(req, res) => {
   res.sendStatus(200)
@@ -229,14 +230,95 @@ router.post('/acceptFriendRequest',handleLogin = async (req,res) => {
   }
 */
 router.post('/rejectFriendRequest',handleLogin = async (req,res) => {
-    mydb.query('DELETE FROM friends WHERE (friend1,friend2)=((SELECT idUser FROM user WHERE username = ?),(SELECT idUser FROM user WHERE username = ?))'
-    ,[req.body.friend,req.body.username],(err,result)=>{
-        if(err){
-            res.json({"ERROR":err})
-            return
-        }   
-        res.json({"OK":result})
-    })
+  mydb.query('DELETE FROM friends WHERE (friend1,friend2)=((SELECT idUser FROM user WHERE username = ?),(SELECT idUser FROM user WHERE username = ?))'
+  ,[req.body.friend,req.body.username],(err,result)=>{
+    if(err){
+      res.json({"ERROR":err})
+      return
+    }   
+    res.json({"OK":result})
+  })
 })
+
+/**
+  Recibe:
+  {
+    "username":"cristianfrancisco85"
+  }
+
+  Retorna:
+  {
+    "OK": [publicaciones] | "ERROR":err.name
+  } 
+  }
+*/
+router.post('/getPublications',handleLogin = async (req,res) => {
+  mydb.query('CALL GetPublications(?)'
+  ,[req.body.username],(err,result)=>{
+    if(err){
+      res.json({"ERROR":err})
+      return
+    } 
+    res.json({"OK":result[0]})
+  })
+})
+
+/**
+  Recibe:
+  {
+    "text":"Texto en otro idioma"
+  }
+
+  Retorna:
+  {
+    "OK": "Texto en Español"| "ERROR":err.name
+  } 
+  }
+*/
+router.post('/translatePublication',handleLogin = async (req,res) => {
+
+  let params = {
+    SourceLanguageCode: 'auto',
+    TargetLanguageCode: 'es',
+    Text: req.body.text
+  }
+  
+  Translate.translateText(params, function (err, data) {
+    if (err) {
+      res.send({ "ERROR": err.name })
+    } 
+    else {
+      res.send({ "OK": data })
+    }
+  })
+
+})
+
+
+/**
+  Recibe:
+  {
+    "username1":"cristianfrancisco85"
+    "username2":"guillermoOC"
+  }
+
+  Retorna:
+  {
+    "OK": 0|1 | "ERROR":err.name
+  } 
+  }
+*/
+router.post('/areFriends',handleLogin = async (req,res) => {
+  mydb.query('SELECT areFriends(?,?) AS RESULT'
+  ,[req.body.username1,req.body.username2],(err,result)=>{
+    if(err){
+      res.json({"ERROR":err})
+      return
+    } 
+    res.json({"OK":result[0]})
+  })
+})
+
+
 
 module.exports = router;
