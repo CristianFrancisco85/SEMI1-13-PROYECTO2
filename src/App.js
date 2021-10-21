@@ -8,6 +8,23 @@ import AddFriend from './components/AddFriend/addFriend'
 import { BadAuthError } from './pages/badAuth'
 import Chat from './components/Chat/chat'
 import { socket, SocketContext } from './contexts/sockets'
+import Amplify, { Interactions } from 'aws-amplify';
+
+Amplify.configure({
+  Auth: {
+    identityPoolId: 'us-east-1:2092261b-c8ba-4e0b-85f5-a94371fe8751',
+    region: 'us-east-1'
+  },
+  Interactions: {
+    bots: {
+      "COVID-BOT": {
+        "name": "COVID-BOT",
+        "alias": "BETA",
+        "region": "us-east-1",
+      }
+    }
+  }
+});
 
 function App() {
 

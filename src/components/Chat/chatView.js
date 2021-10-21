@@ -1,7 +1,5 @@
 import { Card, Col, Container, Row, Button, Form, FormGroup, FormControl} from 'react-bootstrap'
-import CardHeader from 'react-bootstrap/esm/CardHeader'
-import { useLoggedUser } from '../../contexts/globalContext'
-
+import { ChatBot, AmplifyTheme } from 'aws-amplify-react';
 
 const ChatView = (props) =>{
 
