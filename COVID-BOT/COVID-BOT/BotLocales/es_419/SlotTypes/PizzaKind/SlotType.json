@@ -1,0 +1,1 @@
+{"name":"PizzaKind","identifier":"ML5PCSQQYG","description":null,"slotTypeValues":[{"synonyms":[{"value":"veg"}],"sampleValue":{"value":"veg"}},{"synonyms":[{"value":"cheese"}],"sampleValue":{"value":"cheese"}}],"parentSlotTypeSignature":null,"valueSelectionSetting":{"resolutionStrategy":"TOP_RESOLUTION","regexFilter":null}}

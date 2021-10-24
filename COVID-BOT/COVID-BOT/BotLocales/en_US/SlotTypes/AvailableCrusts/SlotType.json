@@ -1,0 +1,1 @@
+{"name":"AvailableCrusts","identifier":"VNMZDIWAFX","description":null,"slotTypeValues":[{"synonyms":[{"value":"unstuffed"}],"sampleValue":{"value":"thin"}},{"synonyms":[{"value":"stuffed"}],"sampleValue":{"value":"thick"}}],"parentSlotTypeSignature":null,"valueSelectionSetting":{"resolutionStrategy":"TOP_RESOLUTION","regexFilter":null}}
