@@ -3,6 +3,9 @@
 ## Arquitectura Implementada
 <img src='./images/arquitectura.png'>
 
+## Base de Datos
+<img src='./images/BDD.jpeg'>
+
 ## Servicios Implementados
 
 Los siguientes servicios que nos ofrece AWS fueron implementados en el proyecto.
